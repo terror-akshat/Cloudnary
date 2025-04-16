@@ -11,22 +11,29 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 app.get("/api/image", async (req, res) => {
-  const { resources } = await cloudinary.search
-    .expression("folder:ml_default")
-    .sort_by("public_id", "desc")
-    .max_results(30)
-    .execute();
-  const publicIds = resources.map((file) => file.public_id);
-  res.send(publicIds);
+  try {
+    const { resources } = await cloudinary.search
+      .expression("folder:Images")
+      .sort_by("public_id", "desc")
+      .max_results(30)
+      .execute();
+
+    const publicIds = resources.map((file) => file.public_id);
+    console.log(publicIds);
+    res.send(publicIds);
+  } catch (err) {
+    console.error("Failed to fetch images:", err);
+    res.status(500).json({ message: "Error fetching images from Cloudinary" });
+  }
 });
 
 app.post("/api/upload", async (req, res) => {
   const fileStr = req.body.data;
   try {
-    const uploadResponse = cloudinary.uploader.upload(fileStr, {
-      upload_preset: "ml_default",
+    const uploadResponse = await cloudinary.uploader.upload(fileStr, {
+      upload_preset: "Demo",
     });
-    console.log((await uploadResponse).secure_url);
+    console.log(uploadResponse);
     return res.json({ url: uploadResponse.secure_url });
   } catch (error) {
     console.log(error);

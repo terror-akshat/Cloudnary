@@ -1,5 +1,8 @@
 import React from "react";
 import axios from "axios";
+import Home from "./Home";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const App = () => {
   const [selectedFile, setSelectedFile] = React.useState(null);
@@ -37,8 +40,13 @@ const App = () => {
 
   return (
     <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/home" element={<Home />} />
+        </Routes>
+      </BrowserRouter>
       <form onSubmit={handleOnSubmit}>
-        <input type="file" onChange={handleOnChange}/>
+        <input type="file" onChange={handleOnChange} />
         <button type="submit"> Submit</button>
       </form>
       {preview && (
